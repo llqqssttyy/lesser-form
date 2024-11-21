@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { CheckboxInput } from './CheckboxInput';
 import { Input } from './Input';
 import { Textarea } from './TextArea';
-type FormItemProps<T> = {
+
+interface FormItemProps<T> {
   initialValue: T;
   children: React.ReactNode;
-};
+  name?: string;
+}
 
-export default function FormItem<T extends string | boolean>({
+export default function FormItem<T>({
   children,
   initialValue,
+  name,
 }: FormItemProps<T>) {
   const [_value, _setValue] = useState<T>(initialValue);
 
@@ -25,6 +28,7 @@ export default function FormItem<T extends string | boolean>({
             React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>
           >,
           {
+            name,
             value: String(_value),
             onChange: (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -34,17 +38,34 @@ export default function FormItem<T extends string | boolean>({
       }
 
       if (type === CheckboxInput) {
+        const isArray = Array.isArray(_value);
         return React.cloneElement(
           child as React.ReactElement<
             React.InputHTMLAttributes<HTMLInputElement>
           >,
           {
-            checked: !!_value,
-            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange(e.target.checked as T),
+            name,
+            checked: isArray
+              ? (_value as string[]).includes(String(child.props.value))
+              : !!_value,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              const newValue = e.target.value;
+              const isChecked = e.target.checked;
+
+              if (isArray) {
+                const updatedValue = isChecked
+                  ? [...(_value as string[]), newValue]
+                  : (_value as string[]).filter((v) => v !== newValue);
+                handleChange(updatedValue as T);
+              } else {
+                handleChange(isChecked as T);
+              }
+            },
           }
         );
       }
+
+      console.warn(`Unhandled type: ${type}`);
     }
     return child;
   });
