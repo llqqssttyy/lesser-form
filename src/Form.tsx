@@ -1,16 +1,16 @@
 import React from 'react';
 
-interface FormProps<T> {
+interface FormProps<TFormFields> {
   children: React.ReactNode;
-  onSubmit?: (values: T) => void;
+  onSubmit?: (values: TFormFields) => void;
   defaultAction?: boolean;
 }
 
-export default function Form<T>({
+export default function Form<TFormFields extends Record<string, any>>({
   children,
   onSubmit,
   defaultAction = false,
-}: FormProps<T>) {
+}: FormProps<TFormFields>) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (!defaultAction) {
       e.preventDefault();
@@ -29,7 +29,7 @@ export default function Form<T>({
       values[key] = value;
     });
 
-    onSubmit?.(values as T);
+    onSubmit?.(values as TFormFields);
   };
 
   return <form onSubmit={handleSubmit}>{children}</form>;
