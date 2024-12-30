@@ -1,8 +1,8 @@
-import { CheckboxInput } from './CheckboxInput';
 import Form from './Form';
 import FormItem from './FormItem';
-import { Input } from './Input';
-import { Textarea } from './TextArea';
+import { Input } from './components/inputs';
+import { Checkbox } from './components/inputs/Checkbox';
+import { Textarea } from './components/inputs/Textarea';
 
 interface FormValues {
   input: string;

@@ -1,28 +1,11 @@
 import styled from '@emotion/styled';
-import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react';
 
-export type InputProps = {
-  label?: string;
-} & InputHTMLAttributes<HTMLInputElement>;
-
-export const Input = forwardRef(function DefaultInput(
-  { label, onChange, ...props }: InputProps,
-  ref: ForwardedRef<HTMLInputElement>
-) {
-  return (
-    <StyledWrapper>
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInput ref={ref} onChange={onChange} {...props} />
-    </StyledWrapper>
-  );
-});
-
-const StyledWrapper = styled.div`
+export const Wrapper = styled.div`
   display: inline-flex;
   flex-direction: column;
 `;
 
-const StyledInput = styled.input`
+export const Input = styled.input`
   display: flex;
   align-items: center;
 
@@ -54,10 +37,4 @@ const StyledInput = styled.input`
   &::placeholder {
     color: #8b95a1;
   }
-`;
-
-const StyledLabel = styled.label`
-  display: inline-block;
-  padding: 5px 0;
-  color: #4e5968;
 `;

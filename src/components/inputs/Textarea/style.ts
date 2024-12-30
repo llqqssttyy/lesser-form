@@ -1,30 +1,11 @@
 import styled from '@emotion/styled';
-import { ForwardedRef, forwardRef } from 'react';
 
-import { TextareaHTMLAttributes } from 'react';
-
-export type TextareaProps = {
-  label?: string;
-} & TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-export const Textarea = forwardRef(function Textarea(
-  { label, onChange, ...props }: TextareaProps,
-  ref: ForwardedRef<HTMLTextAreaElement>
-) {
-  return (
-    <StyledWrapper>
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledTextarea ref={ref} onChange={onChange} {...props} />
-    </StyledWrapper>
-  );
-});
-
-const StyledWrapper = styled.div`
+export const Wrapper = styled.div`
   display: inline-flex;
   flex-direction: column;
 `;
 
-const StyledTextarea = styled.textarea`
+export const Textarea = styled.textarea`
   width: 100%;
   padding: 11px 16px;
   border-radius: 8px;
@@ -56,7 +37,7 @@ const StyledTextarea = styled.textarea`
   }
 `;
 
-const StyledLabel = styled.label`
+export const Label = styled.label`
   display: inline-block;
   padding: 5px 0;
   color: #4e5968;
