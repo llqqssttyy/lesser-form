@@ -17,23 +17,17 @@ function App() {
   };
 
   return (
-    <Form<FormValues> onSubmit={handleSubmit}>
-      <FormItem name="input" initialValue={''}>
+    <Form onSubmit={handleSubmit}>
+      <FormItem name="input" value={''}>
         <Input />
       </FormItem>
 
-      <FormItem name="textarea" initialValue={''}>
+      <FormItem name="textarea" value={''}>
         <Textarea />
       </FormItem>
 
-      <FormItem name="checkbox" initialValue={''}>
-        <CheckboxInput />
-      </FormItem>
-
-      <FormItem name="checkboxes" initialValue={['']}>
-        <CheckboxInput value={'hi'} />
-        <CheckboxInput value={'this'} />
-        <CheckboxInput value={'is'} />
+      <FormItem name="checkbox" value={''}>
+        <Checkbox />
       </FormItem>
     </Form>
   );

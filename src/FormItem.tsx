@@ -1,72 +1,83 @@
-import React, { useState } from 'react';
-import { CheckboxInput } from './CheckboxInput';
-import { Input } from './Input';
-import { Textarea } from './TextArea';
+import React, {
+  ChangeEvent,
+  ComponentProps,
+  ReactElement,
+  ReactNode,
+  useState,
+} from 'react';
+import { Checkbox, Input } from './components/inputs';
+import { Textarea } from './components/inputs/Textarea';
 
-interface FormItemProps<T> {
-  initialValue: T;
-  children: React.ReactNode;
-  name?: string;
+type InputElement = ReactElement<ComponentProps<typeof Input>>;
+type TextareaElement = ReactElement<ComponentProps<typeof Textarea>>;
+type CheckboxElement = ReactElement<ComponentProps<typeof Checkbox>>;
+
+const isInputElement = (element: unknown): element is InputElement => {
+  return element instanceof Input;
+};
+
+const isTextareaElement = (element: unknown): element is TextareaElement => {
+  return element instanceof Textarea;
+};
+
+const isCheckboxElement = (element: unknown): element is CheckboxElement => {
+  return element instanceof Checkbox;
+};
+
+interface FormItemProps {
+  value: string;
+  children: InputElement | TextareaElement | CheckboxElement | ReactNode;
 }
 
-export default function FormItem<T>({
-  children,
-  initialValue,
-  name,
-}: FormItemProps<T>) {
-  const [_value, _setValue] = useState<T>(initialValue);
+export default function FormItem({ children, value }: FormItemProps) {
+  const [_value, _setValue] = useState(value ?? '');
 
-  const handleChange = (newValue: T) => _setValue(newValue);
+  const handleChange = (newValue: string) => _setValue(newValue);
+
+  // TODO: FormItem이 마운트 + _value가 변경되면 formState 업데이트
 
   const enhancedChildren = React.Children.map(children, (child) => {
-    if (React.isValidElement(child)) {
-      const { type } = child;
-
-      if (type === Input || type === Textarea) {
-        return React.cloneElement(
-          child as React.ReactElement<
-            React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>
-          >,
-          {
-            name,
-            value: String(_value),
-            onChange: (
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-            ) => handleChange(e.target.value as T),
+    if (isInputElement(child)) {
+      return React.cloneElement(child, {
+        name: child.props.name,
+        value: _value,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+          handleChange(e.target.value);
+          if (child.props.onChange) {
+            child.props.onChange(e);
           }
-        );
-      }
-
-      if (type === CheckboxInput) {
-        const isArray = Array.isArray(_value);
-        return React.cloneElement(
-          child as React.ReactElement<
-            React.InputHTMLAttributes<HTMLInputElement>
-          >,
-          {
-            name,
-            checked: isArray
-              ? (_value as string[]).includes(String(child.props.value))
-              : !!_value,
-            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-              const newValue = e.target.value;
-              const isChecked = e.target.checked;
-
-              if (isArray) {
-                const updatedValue = isChecked
-                  ? [...(_value as string[]), newValue]
-                  : (_value as string[]).filter((v) => v !== newValue);
-                handleChange(updatedValue as T);
-              } else {
-                handleChange(isChecked as T);
-              }
-            },
-          }
-        );
-      }
-
-      console.warn(`Unhandled type: ${type}`);
+        },
+      });
     }
+
+    if (isTextareaElement(child)) {
+      return React.cloneElement(child, {
+        name: child.props.name,
+        value: _value,
+        onChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
+          handleChange(e.target.value);
+          if (child.props.onChange) {
+            child.props.onChange(e);
+          }
+        },
+      });
+    }
+
+    if (isCheckboxElement(child)) {
+      return React.cloneElement(child, {
+        name: child.props.name,
+        value: _value,
+        // TODO: formState에 value가 있으면 checked: true 전달..
+        // checked: ,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+          handleChange(e.target.value);
+          if (child.props.onChange) {
+            child.props.onChange(e);
+          }
+        },
+      });
+    }
+
     return child;
   });
 
