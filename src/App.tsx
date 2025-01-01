@@ -13,11 +13,11 @@ interface FormValues {
 
 function App() {
   const handleSubmit = (values: FormValues) => {
-    window.alert(JSON.stringify(values));
+    console.log(values);
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form handleSubmit={handleSubmit}>
       <FormItem name="input" value={''}>
         <Input />
       </FormItem>
